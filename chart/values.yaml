@@ -1,0 +1,58 @@
+# Default values for chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+replicaCount: 1
+image:
+  repository: gitlab.example.com/group/project
+  tag: stable
+  pullPolicy: Always
+  secrets:
+    - name: gitlab-registry
+application:
+  track: stable
+  tier: web
+  migrateCommand:
+  initializeCommand:
+  secretName:
+  secretChecksum:
+service:
+  enabled: true
+  name: web
+  type: ClusterIP
+  url: http://my.host.com/
+  path:
+  additionalHosts:
+  commonName:
+  externalPort: 5000
+  internalPort: 5000
+livenessProbe:
+  enabled: true
+  path: "/adapter-imec/health/live"
+  initialDelaySeconds: 180
+  timeoutSeconds: 15
+readinessProbe:
+  enabled: true
+  path: "/adapter-imec/health/ready"
+  initialDelaySeconds: 60
+  timeoutSeconds: 15
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+deployment:
+  # Time after the SigTerm signal to keep the old pod alive.
+  terminationGracePeriodSeconds: 180
+  # Time the application gateway needs to update internal ip's of the new pods. Till then keep old pods for at max 60 seconds.
+  sleepTime: 120
+
+## Configure PodDisruptionBudget
+## ref: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
+#
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 50%
