@@ -1,24 +1,18 @@
-﻿using AdapterImec.Api.Filters.Models;
-using AdapterImec.Api.Models;
-using AdapterImec.Application.Extensions;
-using AdapterImec.Application.Messages.Commands.CreateMessage;
+﻿using AdapterImec.Api.Models;
 using AdapterImec.Application.Messages.Queries.GetMessageByLocationId;
-using AdapterImec.Domain.Exceptions;
-using AdapterImec.Domain.ValueObjects;
+using AdapterImec.Services;
 using AdapterImec.Shared;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace AdapterImec.Api.Controllers
 {
-    [Route("api/locations")]
+    [Route("api")]
     [ApiController]
     [Authorize]
     public class AdapterImecController : ControllerBase
@@ -26,19 +20,29 @@ namespace AdapterImec.Api.Controllers
         private const string MessageType_Imec = "imec";
 
         private readonly IGetImecRequestsService _requestsService;
+        private readonly ImecSettings _imecSettings;
 
-        public AdapterImecController(IGetImecRequestsService requestsService)
+        public AdapterImecController(IGetImecRequestsService requestsService, IConfiguration configuration)
         {
             _requestsService = requestsService;
+            _imecSettings = new ImecSettings();
+            configuration.GetSection("ImecSettings").Bind(_imecSettings);
         }
 
-        [HttpGet("{scheme}/{locationId}/imec")]
+        [HttpGet("pending-requests/{dataSourceId}")]
         [ProducesResponseType(typeof(List<JsonDocument>), 200)]
         [Authorize(Roles = "data_hub")]
-        public async Task<IActionResult> GetMessageByLocationId(string scheme, string locationId, [FromQuery] GetMessageByLocationIdParameters parameters)
+        public async Task<IActionResult> GetMessageByLocationId(string dataSourceId)
         {
-            var response = await _requestsService.GetPendingRequestsAsync(parameters.DateTimeStart, parameters.DateTimeEnd);
-            return Ok(DatahubResponseModelFactory.Create(response));
+            try
+            {
+                var response = await _requestsService.GetPendingRequestsAsync(_imecSettings, dataSourceId);
+                return Ok(DatahubResponseModelFactory.Create(response));
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult(ex.Message);
+            }
         }
     }
 }

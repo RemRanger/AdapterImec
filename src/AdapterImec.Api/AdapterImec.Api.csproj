@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\AdapterImec.Shared\AdapterImec.Shared.csproj" />
     <ProjectReference Include="..\AdapterImec.Application\AdapterImec.Application.csproj" />
     <ProjectReference Include="..\AdapterImec.Domain\AdapterImec.Domain.csproj" />
     <ProjectReference Include="..\AdapterImec.Repository\AdapterImec.Repository.csproj" />

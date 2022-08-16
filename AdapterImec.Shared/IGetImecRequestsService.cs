@@ -4,6 +4,6 @@ namespace AdapterImec.Shared
 {
     public interface IGetImecRequestsService
     {
-        Task<JsonDocument> GetPendingRequestsAsync(DateTime dateTimeStart, DateTime dateTimeEnd);
+        Task<JsonDocument> GetPendingRequestsAsync(ImecSettings imecSettings, string dataSourceId);
     }
 }

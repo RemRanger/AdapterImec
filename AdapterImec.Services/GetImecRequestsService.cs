@@ -1,66 +1,79 @@
 ﻿using AdapterImec.Shared;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace AdapterImec.Services
 {
     public class GetImecRequestsService : IGetImecRequestsService
     {
-        public async Task<JsonDocument> GetPendingRequestsAsync(DateTime dateTimeStart, DateTime dateTimeEnd)
+        public async Task<JsonDocument> GetPendingRequestsAsync(ImecSettings imecSettings, string dataSourceId)
         {
-            //TMP
-            JsonDocument doc = JsonDocument.Parse("{}");
-            await Task.Run(() =>
+            var token = await GetToken(imecSettings);
+            if (string.IsNullOrWhiteSpace(token))
             {
-                var json = @"
-                [
-                    {
-                        ""id"": ""059f1520 - 6400 - 4965 - bee4 - 074e01ed5008"",
-                        ""specification"": {
-                                ""$schema"": ""https://schema.openplanet.cloud/request.json"",
-                            ""$id"": ""5450c513-548a-4007-ab49-af90e75fdd63"",
-                            ""date"": ""2022-08-10T12:09:23.1531606Z"",
-                            ""organisation"": ""Stichting imec Nederland"",
-                            ""purpose"": ""Test1 - To retrieve any data we can get our hands on freely."",
-                            ""endDate"": ""2033-06-08T12:58:16.957Z"",
-                            ""measures"": [
-                                {
-                                    ""name"": ""https://vocabulary.openplanet.cloud/health.json#hr"",
-                                    ""key"": false
-                                }
-                            ],
-                            ""criteria"": [],
-                            ""aggregation"": false,
-                            ""aggregateMinimumRecords"": 0
-                        },
-                        ""state"": ""Pending""
-                    },
-                    {
-                        ""id"": ""cafebabe - 6400 - 4965 - bee4 - 074e01ed5008"",
-                        ""specification"": {
-                                ""$schema"": ""https://schema.openplanet.cloud/request.json"",
-                            ""$id"": ""5450c513-548a-4007-ab49-af90e75fdd63"",
-                            ""date"": ""2022-08-10T12:09:23.1531606Z"",
-                            ""organisation"": ""Stichting imec Nederland"",
-                            ""purpose"": ""Test2 - To retrieve any data we can get our hands on freely."",
-                            ""endDate"": ""2033-06-08T12:58:16.957Z"",
-                            ""measures"": [
-                                {
-                                    ""name"": ""https://vocabulary.openplanet.cloud/health.json#hr"",
-                                    ""key"": false
-                                }
-                            ],
-                            ""criteria"": [],
-                            ""aggregation"": false,
-                            ""aggregateMinimumRecords"": 0
-                        },
-                        ""state"": ""Pending""
-                    }                ]";
+                throw new HttpRequestException("Imec API GET pending requests: failed to get token");
+            }
 
-                doc = JsonDocument.Parse(json);
-            });
+            var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
+            var url = $@"{imecSettings.BaseUrl}/providers/{imecSettings.ProviderId}/sources/{dataSourceId}/requests/pending";
+            var response = await httpClient.GetAsync(url);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException($"Imec API GET pending requests returned: {(int)response.StatusCode} {response.ReasonPhrase}");
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+            var doc = JsonDocument.Parse(json);
             return doc;
-            //tmp
+        }
+
+        private static async Task<string> GetToken(ImecSettings imecSettings)
+        {
+            string token = string.Empty;
+
+            try
+            {
+                var tokenUrl = imecSettings.TokenUrl;
+                var clientId = imecSettings.ClientId!;
+                var clientSecret = imecSettings.ClientSecret!;
+
+                var credentials = new
+                {
+                    clientId,
+                    clientSecret,
+                };
+                var json = JsonSerializer.Serialize(credentials);
+                var httpTokenContent = new StringContent(json);
+                httpTokenContent!.Headers!.ContentType!.MediaType = "application/json";
+
+                var httpClientToken = new HttpClient();
+
+                var response = await httpClientToken.PostAsync(tokenUrl, httpTokenContent);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"Failed to get token: {response}");
+                }
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var responseDoc = JsonDocument.Parse(responseContent);
+                token = responseDoc.RootElement.GetProperty("accessToken").GetString() ?? string.Empty;
+
+                Console.WriteLine(!string.IsNullOrWhiteSpace(token) ? $"Getting token successful." : "Token not found.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Getting token failed: {ex.GetType()} - {ex.Message}");
+            }
+            finally
+            {
+                Console.WriteLine();
+            }
+
+            return token;
         }
     }
 }
