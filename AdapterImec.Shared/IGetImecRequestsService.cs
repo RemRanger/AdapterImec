@@ -1,9 +1,8 @@
 ﻿using System.Text.Json;
 
-namespace AdapterImec.Shared
+namespace AdapterImec.Shared;
+
+public interface IGetImecRequestsService
 {
-    public interface IGetImecRequestsService
-    {
-        Task<JsonDocument> GetPendingRequestsAsync(string dataSourceId);
-    }
+    Task<JsonDocument> GetPendingRequestsAsync(string dataSourceId);
 }
