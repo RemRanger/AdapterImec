@@ -7,7 +7,7 @@ namespace AdapterImec.Domain.ValueObjects
         public string Scheme { get; private set; }
         public string Value { get; private set; }
 
-        public CompanyId() {}
+        public CompanyId() { }
 
         public CompanyId(string scheme, string value)
         {

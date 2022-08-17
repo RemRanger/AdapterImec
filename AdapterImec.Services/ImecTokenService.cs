@@ -1,7 +1,6 @@
 ﻿using AdapterImec.Shared;
 using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
-using System.Text;
 using System.Text.Json;
 
 namespace AdapterImec.Services;

@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace AdapterImec.Api.Models
+﻿namespace AdapterImec.Api.Models
 {
     public class IcarError
     {

@@ -1,10 +1,7 @@
 ﻿using AdapterImec.Api.Models;
-using AdapterImec.Application.Messages.Queries.GetMessageByLocationId;
-using AdapterImec.Services;
 using AdapterImec.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
@@ -17,13 +14,11 @@ namespace AdapterImec.Api.Controllers
     [Authorize]
     public class AdapterImecController : ControllerBase
     {
-        private const string MessageType_Imec = "imec";
+        private readonly IImecService _imecService;
 
-        private readonly IGetImecRequestsService _requestsService;
-
-        public AdapterImecController(IGetImecRequestsService requestsService)
+        public AdapterImecController(IImecService imecService)
         {
-            _requestsService = requestsService;
+            _imecService = imecService;
         }
 
         [HttpGet("pending-requests/{dataSourceId}")]
@@ -33,7 +28,7 @@ namespace AdapterImec.Api.Controllers
         {
             try
             {
-                var response = await _requestsService.GetPendingRequestsAsync(dataSourceId);
+                var response = await _imecService.GetPendingRequestsAsync(dataSourceId);
                 return Ok(DatahubResponseModelFactory.Create(response));
             }
             catch (Exception ex)

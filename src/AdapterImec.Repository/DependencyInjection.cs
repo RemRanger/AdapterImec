@@ -36,7 +36,7 @@ namespace AdapterImec.Repository
             services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddScoped<IDatabaseMigrator, DatabaseMigrator>();
             services.AddSingleton<IImecTokenService, ImecTokenService>();
-            services.AddTransient<IGetImecRequestsService, GetImecRequestsService>();
+            services.AddTransient<IImecService, ImecService>();
         }
     }
 }

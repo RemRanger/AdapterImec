@@ -22,7 +22,7 @@ namespace AdapterImec.Api.Configuration
             var jwtBearerEvents = CreateBearerEvents();
 
             services.AddAuthorization();
-            
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                         .AddJwtBearer(opt =>
                         {
@@ -36,7 +36,7 @@ namespace AdapterImec.Api.Configuration
                             opt.RequireHttpsMetadata = false;
                             opt.Events = jwtBearerEvents;
                         });
-            
+
         }
 
         private static JwtBearerEvents CreateBearerEvents()

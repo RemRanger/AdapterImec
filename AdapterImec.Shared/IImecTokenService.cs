@@ -1,6 +1,6 @@
 ﻿namespace AdapterImec.Shared;
 
-public  interface IImecTokenService
+public interface IImecTokenService
 {
     Task<string?> GetTokenAsync();
 }

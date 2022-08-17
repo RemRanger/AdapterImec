@@ -2,7 +2,7 @@
 
 namespace AdapterImec.Shared;
 
-public interface IGetImecRequestsService
+public interface IImecService
 {
     Task<JsonDocument> GetPendingRequestsAsync(string dataSourceId);
 }

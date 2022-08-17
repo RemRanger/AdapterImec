@@ -1,17 +1,16 @@
 ﻿using AdapterImec.Shared;
 using Microsoft.Extensions.Options;
-using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
 namespace AdapterImec.Services;
 
-public class GetImecRequestsService : IGetImecRequestsService
+public class ImecService : IImecService
 {
     private readonly ImecSettings _settings;
     private readonly IImecTokenService _imecTokenService;
 
-    public GetImecRequestsService(IOptions<ImecSettings> options, IImecTokenService imecTokenService)
+    public ImecService(IOptions<ImecSettings> options, IImecTokenService imecTokenService)
     {
         _settings = options.Value;
         _imecTokenService = imecTokenService;

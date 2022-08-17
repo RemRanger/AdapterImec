@@ -25,7 +25,8 @@ namespace AdapterImec.Api.Filters.Models
 
         public List<Error> Errors { get; set; }
 
-        public class Error {
+        public class Error
+        {
             public string Message { get; set; }
             public string Property { get; set; }
         }

@@ -6,7 +6,7 @@ using Xunit;
 
 namespace AdapterImec.Application.Test.Messages.Repositories
 {
-    public class GetByCustomerValueTest: IClassFixture<DatabaseFixture>
+    public class GetByCustomerValueTest : IClassFixture<DatabaseFixture>
     {
         private readonly CancellationToken cancellationToken = CancellationToken.None;
         private readonly DatabaseFixture fixture;

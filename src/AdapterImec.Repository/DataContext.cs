@@ -1,9 +1,7 @@
 ﻿using AdapterImec.Domain.Entities;
-using AdapterImec.Domain.Exceptions;
 using AdapterImec.Repository.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
 
 namespace AdapterImec.Repository
 {

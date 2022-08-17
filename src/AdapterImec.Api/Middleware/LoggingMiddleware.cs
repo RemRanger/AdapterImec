@@ -72,7 +72,7 @@ namespace AdapterImec.Api.Middleware
                 return null;
             }
 
-            var statusCode = (HttpStatusCode) response.StatusCode;
+            var statusCode = (HttpStatusCode)response.StatusCode;
 
             return $"{response.StatusCode} - {statusCode}";
         }
