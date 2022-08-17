@@ -3,6 +3,7 @@ using AdapterImec.Domain.Exceptions;
 using AdapterImec.Repository.Repositories;
 using AdapterImec.Services;
 using AdapterImec.Shared;
+using AdapterImec.Shared.JoinDataHttpClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,6 +37,7 @@ namespace AdapterImec.Repository
             services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddScoped<IDatabaseMigrator, DatabaseMigrator>();
             services.AddSingleton<IImecTokenService, ImecTokenService>();
+            services.AddTransient<IJoinDataHttpClient, JoinDataHttpClient>();
             services.AddTransient<IImecService, ImecService>();
         }
     }

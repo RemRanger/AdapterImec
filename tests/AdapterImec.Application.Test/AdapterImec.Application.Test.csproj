@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\AdapterImec.Api\AdapterImec.Api.csproj" />
     <ProjectReference Include="..\..\src\AdapterImec.Application\AdapterImec.Application.csproj" />
     <ProjectReference Include="..\..\src\AdapterImec.Repository\AdapterImec.Repository.csproj" />
   </ItemGroup>

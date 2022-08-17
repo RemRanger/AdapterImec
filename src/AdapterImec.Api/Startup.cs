@@ -43,6 +43,8 @@ namespace AdapterImec.Api
 
             services.AddKeyCloakAuthorizion(this.Configuration);
 
+            services.AddHttpClient();
+
             services.Configure<ImecSettings>(this.Configuration.GetSection("ImecSettings"));
         }
 

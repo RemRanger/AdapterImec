@@ -1,5 +1,7 @@
 ﻿using AdapterImec.Shared;
+using AdapterImec.Shared.JoinDataHttpClient;
 using Microsoft.Extensions.Options;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
@@ -8,11 +10,13 @@ namespace AdapterImec.Services;
 public class ImecService : IImecService
 {
     private readonly ImecSettings _settings;
+    private readonly IJoinDataHttpClient _httpClient;
     private readonly IImecTokenService _imecTokenService;
 
-    public ImecService(IOptions<ImecSettings> options, IImecTokenService imecTokenService)
+    public ImecService(IOptions<ImecSettings> options, IJoinDataHttpClient httpClient, IImecTokenService imecTokenService)
     {
         _settings = options.Value;
+        _httpClient = httpClient;
         _imecTokenService = imecTokenService;
     }
 
@@ -24,11 +28,10 @@ public class ImecService : IImecService
             throw new HttpRequestException("Imec API GET pending requests: failed to get token");
         }
 
-        var httpClient = new HttpClient();
-        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var url = $@"{_settings.BaseUrl}/providers/{_settings.ProviderId}/sources/{dataSourceId}/requests/pending";
-        var response = await httpClient.GetAsync(url);
+        var response = await _httpClient.GetAsync(url);
         if (!response.IsSuccessStatusCode)
         {
             throw new HttpRequestException($"Imec API GET pending requests returned: {(int)response.StatusCode} {response.ReasonPhrase}");
