@@ -2,6 +2,7 @@ using AdapterImec.Api.Configuration;
 using AdapterImec.Api.Filters;
 using AdapterImec.Application;
 using AdapterImec.Repository;
+using AdapterImec.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -23,7 +24,6 @@ namespace AdapterImec.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers(options =>
             {
                 //var xml = new XmlSerializerOutputFormatter();
@@ -42,6 +42,8 @@ namespace AdapterImec.Api
             services.AddHealthChecks();
 
             services.AddKeyCloakAuthorizion(this.Configuration);
+
+            services.Configure<ImecSettings>(this.Configuration.GetSection("ImecSettings"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

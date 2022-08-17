@@ -1,15 +1,22 @@
 ﻿using AdapterImec.Shared;
+using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace AdapterImec.Services
 {
     public class GetImecRequestsService : IGetImecRequestsService
     {
-        public async Task<JsonDocument> GetPendingRequestsAsync(ImecSettings imecSettings, string dataSourceId)
+        private readonly ImecSettings _settings;
+
+        public GetImecRequestsService(IOptions<ImecSettings> options)
         {
-            var token = await GetToken(imecSettings);
+            _settings = options.Value;
+        }
+
+        public async Task<JsonDocument> GetPendingRequestsAsync(string dataSourceId)
+        {
+            var token = await GetToken();
             if (string.IsNullOrWhiteSpace(token))
             {
                 throw new HttpRequestException("Imec API GET pending requests: failed to get token");
@@ -18,7 +25,7 @@ namespace AdapterImec.Services
             var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var url = $@"{imecSettings.BaseUrl}/providers/{imecSettings.ProviderId}/sources/{dataSourceId}/requests/pending";
+            var url = $@"{_settings.BaseUrl}/providers/{_settings.ProviderId}/sources/{dataSourceId}/requests/pending";
             var response = await httpClient.GetAsync(url);
             if (!response.IsSuccessStatusCode)
             {
@@ -30,15 +37,15 @@ namespace AdapterImec.Services
             return doc;
         }
 
-        private static async Task<string> GetToken(ImecSettings imecSettings)
+        private async Task<string> GetToken()
         {
             string token = string.Empty;
 
             try
             {
-                var tokenUrl = imecSettings.TokenUrl;
-                var clientId = imecSettings.ClientId!;
-                var clientSecret = imecSettings.ClientSecret!;
+                var tokenUrl = _settings.TokenUrl;
+                var clientId = _settings.ClientId!;
+                var clientSecret = _settings.ClientSecret!;
 
                 var credentials = new
                 {

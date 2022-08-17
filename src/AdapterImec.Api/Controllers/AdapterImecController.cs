@@ -20,13 +20,10 @@ namespace AdapterImec.Api.Controllers
         private const string MessageType_Imec = "imec";
 
         private readonly IGetImecRequestsService _requestsService;
-        private readonly ImecSettings _imecSettings;
 
-        public AdapterImecController(IGetImecRequestsService requestsService, IConfiguration configuration)
+        public AdapterImecController(IGetImecRequestsService requestsService)
         {
             _requestsService = requestsService;
-            _imecSettings = new ImecSettings();
-            configuration.GetSection("ImecSettings").Bind(_imecSettings);
         }
 
         [HttpGet("pending-requests/{dataSourceId}")]
@@ -36,7 +33,7 @@ namespace AdapterImec.Api.Controllers
         {
             try
             {
-                var response = await _requestsService.GetPendingRequestsAsync(_imecSettings, dataSourceId);
+                var response = await _requestsService.GetPendingRequestsAsync(dataSourceId);
                 return Ok(DatahubResponseModelFactory.Create(response));
             }
             catch (Exception ex)
