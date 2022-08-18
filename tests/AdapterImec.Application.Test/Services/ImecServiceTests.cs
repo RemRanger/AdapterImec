@@ -27,7 +27,6 @@ public class ImecServiceTests
     {
         _imecTokenService = new Mock<IImecTokenService>();
 
-
         _httpClient = new Mock<IJoinDataHttpClient>();
         _httpClient.Setup(h => h.DefaultRequestHeaders).Returns(new HttpClient().DefaultRequestHeaders);
 
@@ -48,8 +47,38 @@ public class ImecServiceTests
         // Act
         var jsonDocument = await _imecService.GetPendingRequestsAsync(DataSourceId);
 
-        // ASsert
+        // Assert
         jsonDocument.Should().NotBeNull();
-
     }
+
+    [Fact]
+    public async Task GetPendingRequestsAsync_Should_Throw_HttpRequestException_On_Bad_Token()
+    {
+        // Arrange
+        _imecTokenService.Setup(s => s.GetTokenAsync()).ReturnsAsync(string.Empty);
+        var response = new HttpResponseMessage(HttpStatusCode.OK);
+        _httpClient.Setup(h => h.GetAsync(It.IsAny<string>())).ReturnsAsync(new HttpResponseMessage { StatusCode = HttpStatusCode.OK, Content = new StringContent("{}") });
+
+        // Act
+        var act = async () => await _imecService.GetPendingRequestsAsync(DataSourceId);
+
+        // Assert
+        await act.Should().ThrowAsync<HttpRequestException>().WithMessage("Imec API GET pending requests: failed to get token");
+    }
+
+    [Fact]
+    public async Task GetPendingRequestsAsync_Should_Throw_HttpRequestException_On_Unsuccessful_API_Call()
+    {
+        // Arrange
+        _imecTokenService.Setup(s => s.GetTokenAsync()).ReturnsAsync(Token);
+        var response = new HttpResponseMessage(HttpStatusCode.OK);
+        _httpClient.Setup(h => h.GetAsync(It.IsAny<string>())).ReturnsAsync(new HttpResponseMessage { StatusCode = HttpStatusCode.BadRequest });
+
+        // Act
+        var act = async () => await _imecService.GetPendingRequestsAsync(DataSourceId);
+
+        // Assert
+        await act.Should().ThrowAsync<HttpRequestException>().WithMessage("Imec API GET pending requests returned: 400 Bad Request");
+    }
+
 }
