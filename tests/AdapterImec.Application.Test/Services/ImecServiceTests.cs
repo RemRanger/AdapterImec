@@ -12,7 +12,7 @@ using Xunit;
 
 namespace AdapterImec.Application.Test.Services;
 
-public class IImecServiceTests
+public class ImecServiceTests
 {
     private const string Token = "toktok.alweer.een.ey";
     private const string DataSourceId = "source-de-dates-futile";
@@ -23,7 +23,7 @@ public class IImecServiceTests
     private readonly Mock<IJoinDataHttpClient> _httpClient;
     private readonly ImecService _imecService;
 
-    public IImecServiceTests()
+    public ImecServiceTests()
     {
         _imecTokenService = new Mock<IImecTokenService>();
 
