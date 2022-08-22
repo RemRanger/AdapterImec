@@ -71,11 +71,7 @@ namespace AdapterImec.Api.Configuration
                     var logger = loggerFactory.CreateLogger(nameof(AddKeyCloakAuthorization));
                     logger.LogInformation($"Authentication Failed: {context.Exception}");
 
-                    context.Response.StatusCode = 401;
-                    context.Response.ContentType = "application/json";
-                    var err = "An error occurred processing your authentication.";
-                    var result = JsonConvert.SerializeObject(new { err });
-                    return context.Response.WriteAsync(result);
+                    return Task.CompletedTask;
                 }
             };
         }
