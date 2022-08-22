@@ -1,6 +1,8 @@
 ﻿using AdapterImec.Shared;
+using AdapterImec.Shared.JoinDataHttpClient;
 using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
 using System.Text.Json;
 
 namespace AdapterImec.Services;
@@ -8,13 +10,15 @@ namespace AdapterImec.Services;
 public class ImecTokenService : IImecTokenService
 {
     private readonly ImecSettings _settings;
+    private readonly IJoinDataHttpClient _httpClient;
     private readonly double _tokenExpiryBufferTime = 15;
     private JwtSecurityToken? _decodedToken;
     private string? _originalToken;
 
-    public ImecTokenService(IOptions<ImecSettings> options)
+    public ImecTokenService(IOptions<ImecSettings> options, IJoinDataHttpClient httpClient)
     {
         _settings = options.Value;
+        _httpClient = httpClient;
     }
 
     public async Task<string?> GetTokenAsync()
@@ -34,9 +38,7 @@ public class ImecTokenService : IImecTokenService
             var httpTokenContent = new StringContent(json);
             httpTokenContent!.Headers!.ContentType!.MediaType = "application/json";
 
-            var httpClientToken = new HttpClient();
-
-            var response = await httpClientToken.PostAsync(tokenUrl, httpTokenContent);
+            var response = await _httpClient.PostAsync(tokenUrl, httpTokenContent);
 
             if (response.IsSuccessStatusCode)
             {
