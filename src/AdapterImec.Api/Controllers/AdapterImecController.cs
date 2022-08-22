@@ -24,7 +24,7 @@ namespace AdapterImec.Api.Controllers
         [HttpGet("pending-requests/{dataSourceId}")]
         [ProducesResponseType(typeof(List<JsonDocument>), 200)]
         [Authorize(Roles = "data_hub")]
-        public async Task<IActionResult> GetMessageByLocationId(string dataSourceId)
+        public async Task<IActionResult> GetPendingRequests(string dataSourceId)
         {
             try
             {

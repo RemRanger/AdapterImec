@@ -33,7 +33,7 @@ public class AdapterImecControllerTests
         _imecService.Setup(s => s.GetPendingRequestsAsync(DataSourceId)).ReturnsAsync(jsonDocument);
 
         // Act
-        var result = await _adapterImecController.GetMessageByLocationId(DataSourceId);
+        var result = await _adapterImecController.GetPendingRequests(DataSourceId);
 
         // Assert
         result.Should().BeOfType<OkObjectResult>().Which.Value.Should().BeEquivalentTo(DatahubResponseModelFactory.Create(jsonDocument));
@@ -47,7 +47,7 @@ public class AdapterImecControllerTests
         _imecService.Setup(s => s.GetPendingRequestsAsync(DataSourceId)).Throws(new Exception(ExceptionMessage));
 
         // Act
-        var result = await _adapterImecController.GetMessageByLocationId(DataSourceId);
+        var result = await _adapterImecController.GetPendingRequests(DataSourceId);
 
         // Assert
         result.Should().BeOfType<BadRequestObjectResult>().Which.Value.Should().BeEquivalentTo(ExceptionMessage);
