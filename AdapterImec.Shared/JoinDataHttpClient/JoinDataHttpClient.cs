@@ -13,6 +13,6 @@ namespace AdapterImec.Shared.JoinDataHttpClient
 
         public HttpRequestHeaders DefaultRequestHeaders => _httpClient.DefaultRequestHeaders;
 
-        public Task<HttpResponseMessage> GetAsync(string? requestUri) => _httpClient.GetAsync(requestUri); 
+        public Task<HttpResponseMessage> GetAsync(string? requestUri) => _httpClient.GetAsync(requestUri);
     }
 }

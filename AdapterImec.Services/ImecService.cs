@@ -1,7 +1,6 @@
 ﻿using AdapterImec.Shared;
 using AdapterImec.Shared.JoinDataHttpClient;
 using Microsoft.Extensions.Options;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
@@ -37,8 +36,20 @@ public class ImecService : IImecService
             throw new HttpRequestException($"Imec API GET pending requests returned: {(int)response.StatusCode} {response.ReasonPhrase}");
         }
 
-        var json = await response.Content.ReadAsStringAsync();
-        var doc = JsonDocument.Parse(json);
-        return doc;
+        try
+        {
+            var json = await response.Content.ReadAsStringAsync();
+            var doc = JsonDocument.Parse(json);
+
+            return doc;
+        }
+        catch (JsonException ex)
+        {
+            throw new HttpRequestException($"The response to Imec API GET pending requests contains invalid JSON", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new HttpRequestException($"Failed to read response's JSON", ex);
+        }
     }
 }
